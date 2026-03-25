@@ -187,21 +187,22 @@ def mark_book_as_read(data: list):
 
 
 def generate_reading_list(data: list, genre=None):
-    """Suggest unread books, optionally filtered by genre"""
+    """this function suggests unread books, optionally filtered by genre"""
     # Return list of unread books as tuples (title, author)
     suggest_list = []
     if genre is not None:
         for books in data:
-            if books['genre'] == genre:
+            if books['genre'] == genre and books["read"] is False:
                 suggest_list.append((books["title"], books["author"]))
     else:
         for books in data:
-            suggest_list.append((books["title"], books["author"]))
+            if books['read'] is False:
+                suggest_list.append((books["title"], books["author"]))
     print(suggest_list)
 
 
 def analyze_authors(data: list):
-    """Use dictionary to count books per author"""
+    """this function uses dictionary to count books per author"""
     # Return dict with author names as keys, count as values
     authors = {}
     for author in data:
@@ -210,6 +211,50 @@ def analyze_authors(data: list):
     print(authors)
 
 
+def display_menu():
+    """Show menu options"""
+    print("\n=== Personal Library Manager ===")
+    print("1. Add a book")
+    print("2. Remove a book")
+    print("3. Search for books")
+    print("4. Display all books")
+    print("5. View statistics")
+    print("6. Mark book as read")
+    print("7. Generate reading list")
+    print("8. Classify books by authors")
+    print("0. Exit")
+
+
+def main():
+    display_menu()
+
+    while True:
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            add_book(library)
+        elif choice == "2":
+            remove_book(library)
+        elif choice == "3":
+            search_books(library)
+        elif choice == "4":
+            display_all_books(library)
+        elif choice == "5":
+            view_statistics(library)
+        elif choice == "6":
+            mark_book_as_read(library)
+        elif choice == "7":
+            generate_reading_list(library)
+        elif choice == "8":
+            analyze_authors(library)
+        elif choice == "0":
+            break
+        else:
+            print("Invalid choice option")
+
+
+main()
+
 # mark_book_as_read(library)
 # add_book(library)
 # remove_book(library)
@@ -217,4 +262,4 @@ def analyze_authors(data: list):
 # view_statistics(library)
 # search_books(library)
 # generate_reading_list(library)
-analyze_authors(library)
+# analyze_authors(library)

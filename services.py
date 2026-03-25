@@ -123,6 +123,13 @@ def view_statistics(data: list):
 
 
 def book_search_operator(book_library_data, prompt_message, category_of_search):
+    """
+    this function helps to search for a book or a collection of books
+    :param book_library_data: a library where books are stored
+    :param prompt_message: Unique message based on what search yu are making
+    :param category_of_search: title, author or genre
+    :return:
+    """
     found = False
     choice = input(prompt_message)
     for books in book_library_data:
@@ -135,6 +142,7 @@ def book_search_operator(book_library_data, prompt_message, category_of_search):
 
 
 def search_books(data: list):
+    """this function displays a list of books searched for"""
     while True:
         print("Search book by category: ")
         print("1. Book title")
@@ -144,16 +152,25 @@ def search_books(data: list):
         choice = input("> ")
 
         if choice == "1":
-            book_search_operator(data,"Enter book title: ", "title")
+            book_search_operator(data, "Enter book title: ", "title")
+            break
         elif choice == "2":
             book_search_operator(data, "Enter book author: ", "author")
+            break
         elif choice == "3":
             book_search_operator(data, "Enter book genre: ", "genre")
+            break
         else:
             print("Invalid choice")
 
 
 def mark_book_as_read(data: list):
+    """
+    the user uses this function to update a book that was previously not read
+    It could be any book
+    :param data: library book data
+    :return: None/performs an action
+    """
     looping_time = 0
     while looping_time < len(data):
         book_to_update = data[random.randint(0, len(data) - 1)]
@@ -169,14 +186,35 @@ def mark_book_as_read(data: list):
     print("All books have been read")
 
 
+def generate_reading_list(data: list, genre=None):
+    """Suggest unread books, optionally filtered by genre"""
+    # Return list of unread books as tuples (title, author)
+    suggest_list = []
+    if genre is not None:
+        for books in data:
+            if books['genre'] == genre:
+                suggest_list.append((books["title"], books["author"]))
+    else:
+        for books in data:
+            suggest_list.append((books["title"], books["author"]))
+    print(suggest_list)
 
 
+def analyze_authors(data: list):
+    """Use dictionary to count books per author"""
+    # Return dict with author names as keys, count as values
+    authors = {}
+    for author in data:
+        val = author["author"]
+        authors[val] = authors.setdefault(val, 0) + 1
+    print(authors)
 
 
-
-mark_book_as_read(library)
+# mark_book_as_read(library)
 # add_book(library)
 # remove_book(library)
 # display_all_books(library)
 # view_statistics(library)
 # search_books(library)
+# generate_reading_list(library)
+analyze_authors(library)

@@ -1,12 +1,6 @@
 import random
 from operator import itemgetter
-
-library = [
-    {"title": "The Hobbit", "author": "J.R.R. Tolkien", "year": 1937, "genre": "Fantasy", "read": True, "rating": 5},
-    {"title": "1984", "author": "George Orwell", "year": 1949, "genre": "Dystopian", "read": False, "rating": None},
-    {"title": "Dune", "author": "Frank Herbert", "year": 1965, "genre": "Science Fiction", "read": True, "rating": 4},
-    {"title": "Dune", "author": "Frank Herbert", "year": 1965, "genre": "Science Fiction", "read": True, "rating": 4}
-]
+from database import library
 
 
 def validate_string(prompt: str) -> str:
@@ -69,6 +63,10 @@ def add_book(data: list):
     rating = book_rating(read)
 
     book = {"title": title, "author": author, "year": year, "genre": genre, "read": read, "rating": rating}
+    for b in data:
+        if book["title"].casefold() == b["title"].casefold() and book["author"].casefold() == b["author"].casefold():
+            print("Book already exists")
+            return
     data.append(book)
     print(f"Book Added!!! Title: {title}")
     print(data)
@@ -253,10 +251,10 @@ def main():
             print("Invalid choice option")
 
 
-main()
+# main()
 
 # mark_book_as_read(library)
-# add_book(library)
+add_book(library)
 # remove_book(library)
 # display_all_books(library)
 # view_statistics(library)

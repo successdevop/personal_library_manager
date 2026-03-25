@@ -101,9 +101,7 @@ def view_statistics(data: list):
     most_common_genre = ""
     common_genre = 0
 
-    print(data)
     new_data = sorted(data, key=itemgetter("year"))
-    print(new_data)
     books_per_decade = 0
 
     for stat in data:
@@ -124,10 +122,61 @@ def view_statistics(data: list):
     print(f"Most common genre: {most_common_genre}")
 
 
+def book_search_operator(book_library_data, prompt_message, category_of_search):
+    found = False
+    choice = input(prompt_message)
+    for books in book_library_data:
+        if books.get(category_of_search) == choice:
+            print(f"{books}")
+            found = True
+
+    if not found:
+        print(f"Books with this {category_of_search} not found")
+
+
+def search_books(data: list):
+    while True:
+        print("Search book by category: ")
+        print("1. Book title")
+        print("2. Book author")
+        print("3. Book genre")
+
+        choice = input("> ")
+
+        if choice == "1":
+            book_search_operator(data,"Enter book title: ", "title")
+        elif choice == "2":
+            book_search_operator(data, "Enter book author: ", "author")
+        elif choice == "3":
+            book_search_operator(data, "Enter book genre: ", "genre")
+        else:
+            print("Invalid choice")
+
+
+def mark_book_as_read(data: list):
+    looping_time = 0
+    while looping_time < len(data):
+        book_to_update = data[random.randint(0, len(data) - 1)]
+        if not book_to_update.get("read"):
+            book_to_update["read"] = True
+            book_to_update["rating"] = book_rating(book_to_update["read"])
+            print("Book updated to read")
+            print(data)
+            return
+        else:
+            data.remove(book_to_update)
+
+    print("All books have been read")
 
 
 
+
+
+
+
+mark_book_as_read(library)
 # add_book(library)
 # remove_book(library)
 # display_all_books(library)
-view_statistics(library)
+# view_statistics(library)
+# search_books(library)

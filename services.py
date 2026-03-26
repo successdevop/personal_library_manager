@@ -76,17 +76,17 @@ def remove_book(data: list):
     """this function removes a book from the libreary by the book's title"""
     book_r = input("Enter the title of the book: ")
     for book in data:
-        if book["title"] == book_r:
+        if book.get("title").casefold() == book_r.casefold():
             data.remove(book)
-            print("Book deleted")
+            print("Book removed")
             return
     print("Book not found")
 
 
 def display_all_books(data: list):
     """ this function displays all books in our library"""
-    for book in data:
-        print(f"Book: {book['title']} | Author: {book['author']}")
+    for index, book in enumerate(data, 1):
+        print(f"{index}. {book['title']} - {book['author']} ({'Available' if book['available'] else 'Borrowed'})")
 
 
 def view_statistics(data: list):
@@ -120,19 +120,27 @@ def view_statistics(data: list):
     print(f"Most common genre: {most_common_genre}")
 
 
-def book_search_operator(book_library_data, prompt_message, category_of_search):
+def book_search_operator(book_library_data, choice, category_of_search):
     """
     this function helps to search for a book or a collection of books
     :param book_library_data: a library where books are stored
-    :param prompt_message: Unique message based on what search yu are making
+    :param choice: Unique message based on what search you are making
     :param category_of_search: title, author or genre
     :return:
     """
     found = False
-    choice = input(prompt_message)
-    for books in book_library_data:
-        if books.get(category_of_search) == choice:
-            print(f"{books}")
+    text = ""
+
+    if choice == "1":
+        text = input("Enter book title: ")
+    elif choice == "2":
+        text = input("Enter book author: ")
+    elif choice == "3":
+        text = input("Enter book genre: ")
+
+    for index, books in enumerate(book_library_data, 1):
+        if text in books.get(category_of_search):
+            print(f"{index}. Book_title: {books['title']} - | - Author: {books['author']}")
             found = True
 
     if not found:
@@ -150,13 +158,13 @@ def search_books(data: list):
         choice = input("> ")
 
         if choice == "1":
-            book_search_operator(data, "Enter book title: ", "title")
+            book_search_operator(data, choice, "title")
             break
         elif choice == "2":
-            book_search_operator(data, "Enter book author: ", "author")
+            book_search_operator(data, choice, "author")
             break
         elif choice == "3":
-            book_search_operator(data, "Enter book genre: ", "genre")
+            book_search_operator(data, choice, "genre")
             break
         else:
             print("Invalid choice")
@@ -254,10 +262,10 @@ def main():
 # main()
 
 # mark_book_as_read(library)
-add_book(library)
+# add_book(library)
 # remove_book(library)
 # display_all_books(library)
 # view_statistics(library)
-# search_books(library)
+search_books(library)
 # generate_reading_list(library)
 # analyze_authors(library)

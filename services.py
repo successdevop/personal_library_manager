@@ -138,16 +138,16 @@ def book_search_operator(book_library_data, choice, category_of_search):
     elif choice == "3":
         text = input("Enter book genre: ")
 
-    for index, books in enumerate(book_library_data, 1):
-        if text in books.get(category_of_search):
-            print(f"{index}. Book_title: {books['title']} - | - Author: {books['author']}")
+    for books in book_library_data:
+        if text.casefold() in books.get(category_of_search).casefold():
+            print(f"** Book_title: {books['title']} - | - Author: {books['author']}")
             found = True
 
     if not found:
         print(f"Books with this {category_of_search} not found")
 
 
-def search_books(data: list):
+def book_search(data: list):
     """this function displays a list of books searched for"""
     while True:
         print("Search book by category: ")
@@ -183,8 +183,7 @@ def mark_book_as_read(data: list):
         if not book_to_update.get("read"):
             book_to_update["read"] = True
             book_to_update["rating"] = book_rating(book_to_update["read"])
-            print("Book updated to read")
-            print(data)
+            print(f"I have just finished reading the book ({book_to_update['title']})")
             return
         else:
             data.remove(book_to_update)
@@ -242,7 +241,7 @@ def main():
         elif choice == "2":
             remove_book(library)
         elif choice == "3":
-            search_books(library)
+            book_search(library)
         elif choice == "4":
             display_all_books(library)
         elif choice == "5":
@@ -261,11 +260,11 @@ def main():
 
 # main()
 
-# mark_book_as_read(library)
 # add_book(library)
 # remove_book(library)
 # display_all_books(library)
 # view_statistics(library)
-search_books(library)
+# book_search(library)
+# mark_book_as_read(library)
 # generate_reading_list(library)
 # analyze_authors(library)

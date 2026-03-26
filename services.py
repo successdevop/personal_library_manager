@@ -170,7 +170,7 @@ def book_search(data: list):
             print("Invalid choice")
 
 
-def mark_book_as_read(data: list):
+def update_reading_status(data: list):
     """
     the user uses this function to update a book that was previously not read
     It could be any book
@@ -183,7 +183,7 @@ def mark_book_as_read(data: list):
         if not book_to_update.get("read"):
             book_to_update["read"] = True
             book_to_update["rating"] = book_rating(book_to_update["read"])
-            print(f"I have just finished reading the book ({book_to_update['title']})")
+            print(f"I have just finished reading the book ({book_to_update['title']}). Book updated")
             return
         else:
             data.remove(book_to_update)
@@ -194,16 +194,20 @@ def mark_book_as_read(data: list):
 def generate_reading_list(data: list, genre=None):
     """this function suggests unread books, optionally filtered by genre"""
     # Return list of unread books as tuples (title, author)
+    found = False
     suggest_list = []
     if genre is not None:
         for books in data:
-            if books['genre'] == genre and books["read"] is False:
+            if books['genre'].casefold() == genre.casefold() and books["read"] is False:
                 suggest_list.append((books["title"], books["author"]))
+                found = True
     else:
         for books in data:
             if books['read'] is False:
                 suggest_list.append((books["title"], books["author"]))
-    print(suggest_list)
+                found = True
+    if not found:
+        print("No unread book with such genre")
 
 
 def analyze_authors(data: list):
@@ -247,7 +251,7 @@ def main():
         elif choice == "5":
             view_statistics(library)
         elif choice == "6":
-            mark_book_as_read(library)
+            update_reading_status(library)
         elif choice == "7":
             generate_reading_list(library)
         elif choice == "8":
@@ -266,5 +270,5 @@ def main():
 # view_statistics(library)
 # book_search(library)
 # mark_book_as_read(library)
-# generate_reading_list(library)
+# generate_reading_list(library, genre="romance")
 # analyze_authors(library)

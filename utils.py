@@ -4,7 +4,7 @@ import json
 from operator import itemgetter
 
 
-def load_borrowed_user(file):
+def load_json_data(file):
     try:
         with open(file, mode='r', encoding='utf-8') as file_reader:
             return json.load(file_reader)
@@ -129,16 +129,19 @@ def borrow_book(data: list):
     :param data: library list of books
     :return: None
     """
-    name = input("Please enter your name: ")
-    book_title_to_be_borrowed = input("Enter book title: ")
+    if not data:
+        return
+
+    name = validate_string("Please enter your name: ")
+    book_title_to_be_borrowed = validate_string("Enter book title: ")
     found = False
 
     for books in data:
         if books.get("title").casefold() == book_title_to_be_borrowed.casefold() and books["available"]:
             books["available"] = False
-            books["borrowed_at"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+            books["borrowed_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
-            users = load_borrowed_user('users.json')
+            users = load_json_data('users.json')
             if not users:
                 users.append({"name": name, "borrowed_books": [].append(book_title_to_be_borrowed)})
                 with open('users.json', mode='w', encoding='utf-8') as write_file:
@@ -159,7 +162,38 @@ def borrow_book(data: list):
 
 
 def return_borrowed_book():
-    pass
+    """
+    this function searches our borrower's database(json file), if users are found that means books have been
+    borrowed. then we check the name of the borrower and the title of the book borrowed, if found, the availability
+    would be set to True, the time returned would be documented and the book would be deleted from the borrower's
+    list of borrowed books and a message would be returned. Otherwise, it would return book not found.
+    :return: a message string text
+    """
+    found = False
+    users = load_json_data('users.json')
+    if not users:
+        return "No books borrowed"
+
+    name = validate_string("Please enter your name: ")
+    book_title_borrowed = validate_string("Please enter the title of book borrowed")
+
+    for user in users:
+        if user['name'] == name and book_title_borrowed.casefold() in user["borrowed_books"]:
+            library_ = load_json_data('data.json')
+            for books in library_:
+                if books["title"].casefold() == book_title_borrowed.casefold():
+                    books["available"] = True
+                    books["returned_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+            user["borrowed_books"].remove(book_title_borrowed)
+            found = True
+
+    if not found:
+        return "Book not found"
+    else:
+        return {f"{name.capitalize()} has returned the book ({book_title_borrowed})"}
+
+
+
 
 
 def view_statistics(data: list):

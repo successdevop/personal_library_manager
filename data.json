@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "title": "half of a yellow sun",
+        "author": "adichie chimamanda",
+        "year": 2006,
+        "genre": "culture",
+        "read": true,
+        "rating": 3,
+        "available": true,
+        "borrowed_at": null,
+        "returned_at": null
+    }
+]

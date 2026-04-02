@@ -1,4 +1,5 @@
-import itertools
+import datetime
+import locale
 import random
 import json
 from operator import itemgetter
@@ -110,6 +111,34 @@ def display_all_books(data: list):
     """ this function displays all books in our library"""
     for index, book in enumerate(data, 1):
         print(f"{index}. {book['title']} - {book['author']} ({'Available' if book['available'] else 'Borrowed'})")
+
+
+def borrow_book(data: list) -> dict:
+    """
+    this function searches for the book that the user wants to borrow, if the book is available
+    to be borrowed, the key value changes to False. If it is not available it prints a message
+    telling that the book is not available to be borrowed
+    :param data: library list of books
+    :return: None
+    """
+    name = input("Please enter your name: ")
+    book_title_to_be_borrowed = input("Enter book title: ")
+    found = False
+
+    for books in data:
+        if books.get("title").casefold() == book_title_to_be_borrowed.casefold() and books["available"]:
+            books["available"] = False
+            books["borrowed_at"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+            print(f"{books['title']} borrowed to {name} and to be returned in ten days time")
+            return {"name": name, "book_title": book_title_to_be_borrowed}
+
+        elif books.get("title").casefold() == book_title_to_be_borrowed.casefold():
+            print("Book has been borrowed")
+            found = True
+            break
+
+    if not found:
+        print("Book not found")
 
 
 def view_statistics(data: list):
@@ -243,31 +272,7 @@ def analyze_authors(data: list):
     print(authors)
 
 
-def borrow_book(data: list):
-    """
-    this function searches for the book that the user wants to borrow, if the book is available
-    to be borrowed, the key value changes to False. If it is not available it prints a message
-    telling that the book is not available to be borrowed
-    :param data: library list of books
-    :return: None
-    """
-    name = input("Please enter your name: ")
-    book_title_to_be_borrowed = input("Enter book title: ")
-    found = False
 
-    for books in data:
-        if books.get("title").casefold() == book_title_to_be_borrowed.casefold() and books["available"]:
-            books["available"] = False
-            print(f"{books['title']} borrowed to {name} and to be returned in ten days time")
-            found = True
-            break
-        elif books.get("title").casefold() == book_title_to_be_borrowed.casefold():
-            print("Book has been borrowed")
-            found = True
-            break
-
-    if not found:
-        print("Book not found")
 
 def return_borrowed_book(data: list):
     working_information = borrow_book(data)
@@ -319,7 +324,7 @@ def main():
 
 # main()
 
-add_book(library)
+# add_book(library)
 # remove_book(library)
 # display_all_books(library)
 # view_statistics(library)

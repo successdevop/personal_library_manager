@@ -1,8 +1,16 @@
 import datetime
-import locale
 import random
 import json
 from operator import itemgetter
+
+
+def load_borrowed_user(file):
+    try:
+        with open(file, mode='r', encoding='utf-8') as file_reader:
+            return json.load(file_reader)
+    except Exception as e:
+        print(f"Error message: {e}")
+        return []
 
 
 def validate_string(prompt: str) -> str:
@@ -113,11 +121,11 @@ def display_all_books(data: list):
         print(f"{index}. {book['title']} - {book['author']} ({'Available' if book['available'] else 'Borrowed'})")
 
 
-def borrow_book(data: list) -> dict:
+def borrow_book(data: list):
     """
     this function searches for the book that the user wants to borrow, if the book is available
-    to be borrowed, the key value changes to False. If it is not available it prints a message
-    telling that the book is not available to be borrowed
+    to be borrowed, the key value changes to False, to indicate it has been borrowed.
+    If it is not available it prints a message telling that the book is not available to be borrowed
     :param data: library list of books
     :return: None
     """
@@ -129,9 +137,18 @@ def borrow_book(data: list) -> dict:
         if books.get("title").casefold() == book_title_to_be_borrowed.casefold() and books["available"]:
             books["available"] = False
             books["borrowed_at"] = datetime.now().strftime("%Y-%m-%d %H:%M")
-            print(f"{books['title']} borrowed to {name} and to be returned in ten days time")
-            return {"name": name, "book_title": book_title_to_be_borrowed}
 
+            users = load_borrowed_user('users.json')
+            if not users:
+                users.append({"name": name, "borrowed_books": [].append(book_title_to_be_borrowed)})
+                with open('users.json', mode='w', encoding='utf-8') as write_file:
+                    json.dump(users, write_file, indent=4)
+            else:
+                for user in users:
+                    if user["name"] == name:
+                        user["borrowed_books"].append(book_title_to_be_borrowed)
+            print(f"{books['title']} borrowed to {name.capitalize()} and to be returned in ten days time")
+            return
         elif books.get("title").casefold() == book_title_to_be_borrowed.casefold():
             print("Book has been borrowed")
             found = True
@@ -139,6 +156,10 @@ def borrow_book(data: list) -> dict:
 
     if not found:
         print("Book not found")
+
+
+def return_borrowed_book():
+    pass
 
 
 def view_statistics(data: list):

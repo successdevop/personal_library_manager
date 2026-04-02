@@ -292,28 +292,25 @@ def update_reading_status(data: list):
             break
 
 
-
-
 def generate_reading_list(data: list, genre=None):
     """this function suggests unread books, optionally filtered by genre"""
     # Return list of unread books as tuples (title, author)
-    found = False
-    suggest_list = []
-    if genre is not None:
-        for books in data:
-            if books['genre'].casefold() == genre.casefold() and books["read"] is False:
-                suggest_list.append((books["title"], books["author"]))
-                found = True
-    else:
-        for books in data:
-            if books['read'] is False:
-                suggest_list.append((books["title"], books["author"]))
-                found = True
-    if not found:
-        print("No unread book with such genre")
+
+    unread_books = [books for books in data if not books["read"]]
+    if not unread_books:
+        print("No unread books")
+        return
+
+    if genre:
+        for book in unread_books:
+            print(f"{(book["title"], book["author"]) if book["genre"] == genre else None}")
+        return
+
+    for books in unread_books:
+        print(f"{(books["title"], books["author"])}")
 
 
-def analyze_authors(data: list):
+def books_per_author(data: list):
     """this function uses dictionary to count books per author"""
     # Return dict with author names as keys, count as values
     authors = {}

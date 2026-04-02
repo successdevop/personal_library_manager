@@ -5,12 +5,19 @@ from operator import itemgetter
 
 
 def load_json_data(file):
+    """this functions loads data into our python list by reading data from our json file/document"""
     try:
         with open(file, mode='r', encoding='utf-8') as file_reader:
             return json.load(file_reader)
     except Exception as e:
         print(f"Error message: {e}")
         return []
+
+
+def update_json_data(data):
+    """this function updates our json file with every change made in our data object"""
+    with open('data.json', mode='w', encoding='utf-8') as write_data:
+        json.dump(data, write_data, indent=4)
 
 
 def validate_string(prompt: str) -> str:
@@ -97,8 +104,7 @@ def add_book(data: list):
             return
 
     data.append(book)
-    with open('data.json', mode='w', encoding='utf-8') as write_data:
-        json.dump(data, write_data, indent=4)
+    update_json_data(data)
 
     print(f"Book Added!!! Title: {title}")
     print(data)
@@ -118,7 +124,7 @@ def remove_book(data: list):
 def display_all_books(data: list):
     """ this function displays all books in our library"""
     for index, book in enumerate(data, 1):
-        print(f"{index}. {book['title']} - {book['author']} ({'Available' if book['available'] else 'Borrowed'})")
+        print(f"{index}. {book['title'].capitalize()} - {book['author'].capitalize()} ({'Available' if book['available'] else 'Borrowed'})")
 
 
 def borrow_book(data: list) -> str:
@@ -192,32 +198,11 @@ def return_borrowed_book():
 def view_statistics(data: list):
     """ this function shows the different statistics about books in our library"""
     total_books = len(data)
-    total_read_books = 0
-    total_unread_books = 0
-    average_rating_of_read_books = 0
-    most_common_genre_dict = {}
-    most_common_genre = ""
-    common_genre = 0
-
-    new_data = sorted(data, key=itemgetter("year"))
-    books_per_decade = 0
-
-    for stat in data:
-        if not stat["read"]:
-            total_unread_books += 1
-        if stat["rating"]:
-            average_rating_of_read_books += stat["rating"]
-        most_common_genre_dict[stat["genre"]] = most_common_genre_dict.setdefault(stat["genre"], 0) + 1
-
-    print(f"total books: {total_books}")
-    print(f"Unread book count: {total_unread_books}")
-    print(f"Average rating of read book: {average_rating_of_read_books / (total_books - total_unread_books)}")
-    for k, v in most_common_genre_dict.items():
-        if common_genre < v:
-            most_common_genre = k
-        else:
-            most_common_genre = None
-    print(f"Most common genre: {most_common_genre}")
+    print(total_books)
+    available_books = len([book for book in data if book["available"]])
+    print(available_books)
+    unavailable_books = total_books - available_books
+    print(unavailable_books)
 
 
 def book_search_operator(book_library_data, choice, category_of_search):
@@ -232,16 +217,28 @@ def book_search_operator(book_library_data, choice, category_of_search):
     text = ""
 
     if choice == "1":
-        text = input("Enter book title: ")
+        text = validate_string("Enter book title: ")
     elif choice == "2":
-        text = input("Enter book author: ")
+        text = validate_string("Enter book author: ")
     elif choice == "3":
-        text = input("Enter book genre: ")
+        text = validate_string("Enter book genre: ")
+    elif choice == "4":
+        text = input("Please enter ratings between 1 to 5: ")
 
-    for books in book_library_data:
-        if text.casefold() in books.get(category_of_search).casefold():
-            print(f"** Book_title: {books['title']} - | - Author: {books['author']}")
-            found = True
+    if text.isnumeric():
+        if 1 <= int(text) <= 5:
+            for books in book_library_data:
+                if books.get(category_of_search) >= text:
+                    print(f"** Book_title: {books['title']} - | - Author: {books['author']}")
+                    found = True
+        else:
+            print("Enter a rating between 1 to 5 next time. Bye....")
+            return
+    else:
+        for books in book_library_data:
+            if text.casefold() in books.get(category_of_search).casefold():
+                print(f"** Book_title: {books['title']} - | - Author: {books['author']}")
+                found = True
 
     if not found:
         print(f"Books with this {category_of_search} not found")
@@ -254,6 +251,7 @@ def book_search(data: list):
         print("1. Book title")
         print("2. Book author")
         print("3. Book genre")
+        print("4. Book rating")
 
         choice = input("> ")
 
@@ -266,6 +264,8 @@ def book_search(data: list):
         elif choice == "3":
             book_search_operator(data, choice, "genre")
             break
+        elif choice == "4":
+            book_search_operator(data, choice, "rating")
         else:
             print("Invalid choice")
 
@@ -288,6 +288,7 @@ def update_reading_status(data: list):
         if book.get("title") == book_to_update["title"]:
             book["read"] = True
             book["rating"] = book_rating(book["read"])
+            update_json_data(data)
             print(f"I have just finished reading the book ({book_to_update['title']}). Book updated")
             break
 
@@ -301,9 +302,15 @@ def generate_reading_list(data: list, genre=None):
         print("No unread books")
         return
 
-    if genre:
-        for book in unread_books:
-            print(f"{(book["title"], book["author"]) if book["genre"] == genre else None}")
+    found = False
+
+    if genre is not None:
+        for books in unread_books:
+            if books.get("genre").casefold() == genre.casefold():
+                print(f"{(books["title"], books["author"])}")
+                found = True
+        if not found:
+            print("There are no unread books with such genre")
         return
 
     for books in unread_books:

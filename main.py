@@ -15,3 +15,4 @@ library = load_data()
 
 # add_book(library)
 # display_all_books(library)
+update_reading_status(library)

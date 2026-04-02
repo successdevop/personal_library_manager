@@ -121,20 +121,19 @@ def display_all_books(data: list):
         print(f"{index}. {book['title']} - {book['author']} ({'Available' if book['available'] else 'Borrowed'})")
 
 
-def borrow_book(data: list):
+def borrow_book(data: list) -> str:
     """
     this function searches for the book that the user wants to borrow, if the book is available
     to be borrowed, the key value changes to False, to indicate it has been borrowed.
     If it is not available it prints a message telling that the book is not available to be borrowed
     :param data: library list of books
-    :return: None
+    :return: a string message
     """
     if not data:
-        return
+        return "No book in the library"
 
     name = validate_string("Please enter your name: ")
     book_title_to_be_borrowed = validate_string("Enter book title: ")
-    found = False
 
     for books in data:
         if books.get("title").casefold() == book_title_to_be_borrowed.casefold() and books["available"]:
@@ -150,15 +149,12 @@ def borrow_book(data: list):
                 for user in users:
                     if user["name"] == name:
                         user["borrowed_books"].append(book_title_to_be_borrowed)
-            print(f"{books['title']} borrowed to {name.capitalize()} and to be returned in ten days time")
-            return
-        elif books.get("title").casefold() == book_title_to_be_borrowed.casefold():
-            print("Book has been borrowed")
-            found = True
-            break
+            return f"{books['title']} borrowed to {name.capitalize()} and to be returned in ten days time"
 
-    if not found:
-        print("Book not found")
+        elif books.get("title").casefold() == book_title_to_be_borrowed.casefold():
+            return "Book has been borrowed"
+
+        return "Book not found"
 
 
 def return_borrowed_book():
@@ -191,9 +187,6 @@ def return_borrowed_book():
         return "Book not found"
     else:
         return {f"{name.capitalize()} has returned the book ({book_title_borrowed})"}
-
-
-
 
 
 def view_statistics(data: list):
@@ -284,18 +277,21 @@ def update_reading_status(data: list):
     :param data: library book data
     :return: None/performs an action
     """
-    looping_time = 0
-    while looping_time < len(data):
-        book_to_update = data[random.randint(0, len(data) - 1)]
-        if not book_to_update.get("read"):
-            book_to_update["read"] = True
-            book_to_update["rating"] = book_rating(book_to_update["read"])
-            print(f"I have just finished reading the book ({book_to_update['title']}). Book updated")
-            return
-        else:
-            data.remove(book_to_update)
+    unread_books = [book for book in data if not book["read"]]
+    if not unread_books:
+        print("All books have been read")
+        return
 
-    print("All books have been read")
+    book_to_update = random.choice(unread_books)
+
+    for book in data:
+        if book.get("title") == book_to_update["title"]:
+            book["read"] = True
+            book["rating"] = book_rating(book["read"])
+            print(f"I have just finished reading the book ({book_to_update['title']}). Book updated")
+            break
+
+
 
 
 def generate_reading_list(data: list, genre=None):
@@ -325,14 +321,6 @@ def analyze_authors(data: list):
         val = author["author"]
         authors[val] = authors.setdefault(val, 0) + 1
     print(authors)
-
-
-
-
-def return_borrowed_book(data: list):
-    working_information = borrow_book(data)
-    print(working_information)
-    # for b in data:
 
 
 def display_menu():

@@ -1,13 +1,14 @@
+import itertools
 import random
+import json
 from operator import itemgetter
-from database import library
 
 
 def validate_string(prompt: str) -> str:
     """
     this function makes sure that an empty space is not returned
     and the text returned must be greater or equal to three characters
-    :param prompt: user input
+    :param prompt: user string input
     :return: str value
     """
     while True:
@@ -20,8 +21,8 @@ def validate_string(prompt: str) -> str:
 def validate_numbers(prompt: str) -> int:
     """
     this function makes sure that negative numbers or decimal numbers are not returned
-    :param prompt: it takes a string input
-    :return: a string
+    :param prompt: user string input
+    :return: an int value
     """
     while True:
         num = input(prompt)
@@ -41,15 +42,30 @@ def read_book() -> bool:
 
 def book_rating(val: bool):
     """
-    this function generates random numbers between, 1 to 10
-    if the number is between, 1 to 5, it returns the number
-    otherwise it returns None
-    :return: int or None
+    this function checks the val boolean input, if it is True,
+    the function generates random numbers between, 1 to 5, and
+    returns an int value otherwise it returns None
+    :param val: a boolean value
+    :return: int or None value
     """
     if val is True:
         return random.randint(1, 5)
 
     return None
+
+
+def generate_id(data: list) -> float:
+    """
+    this function generates a unique id for every book object created.
+    It uses the while loop to check if the number exit, if it does, it
+    generates another id and if it doesn't it returns the number generated
+    :return: an int value
+    """
+    bk_id = 1
+    while True:
+        if not any(bk["id"] == bk_id for bk in data):
+            return bk_id
+        bk_id += 1
 
 
 def add_book(data: list):
@@ -61,13 +77,20 @@ def add_book(data: list):
     genre = validate_string("Enter the genre: ")
     read = read_book()
     rating = book_rating(read)
+    book_id = generate_id(data)
 
-    book = {"title": title, "author": author, "year": year, "genre": genre, "read": read, "rating": rating}
+    book = {"id": book_id, "title": title, "author": author, "year": year, "genre": genre, "read": read, "rating": rating,
+            "available": True, "borrowed_at": None, "returned_at": None}
+
     for b in data:
         if book["title"].casefold() == b["title"].casefold() and book["author"].casefold() == b["author"].casefold():
             print("Book already exists")
             return
+
     data.append(book)
+    with open('data.json', mode='w', encoding='utf-8') as write_data:
+        json.dump(data, write_data, indent=4)
+
     print(f"Book Added!!! Title: {title}")
     print(data)
 
@@ -220,6 +243,38 @@ def analyze_authors(data: list):
     print(authors)
 
 
+def borrow_book(data: list):
+    """
+    this function searches for the book that the user wants to borrow, if the book is available
+    to be borrowed, the key value changes to False. If it is not available it prints a message
+    telling that the book is not available to be borrowed
+    :param data: library list of books
+    :return: None
+    """
+    name = input("Please enter your name: ")
+    book_title_to_be_borrowed = input("Enter book title: ")
+    found = False
+
+    for books in data:
+        if books.get("title").casefold() == book_title_to_be_borrowed.casefold() and books["available"]:
+            books["available"] = False
+            print(f"{books['title']} borrowed to {name} and to be returned in ten days time")
+            found = True
+            break
+        elif books.get("title").casefold() == book_title_to_be_borrowed.casefold():
+            print("Book has been borrowed")
+            found = True
+            break
+
+    if not found:
+        print("Book not found")
+
+def return_borrowed_book(data: list):
+    working_information = borrow_book(data)
+    print(working_information)
+    # for b in data:
+
+
 def display_menu():
     """Show menu options"""
     print("\n=== Personal Library Manager ===")
@@ -264,7 +319,7 @@ def main():
 
 # main()
 
-# add_book(library)
+add_book(library)
 # remove_book(library)
 # display_all_books(library)
 # view_statistics(library)
@@ -272,3 +327,5 @@ def main():
 # mark_book_as_read(library)
 # generate_reading_list(library, genre="romance")
 # analyze_authors(library)
+# borrow_book(library)
+# return_borrowed_book(library)

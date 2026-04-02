@@ -226,9 +226,10 @@ def book_search_operator(book_library_data, choice, category_of_search):
         text = input("Please enter ratings between 1 to 5: ")
 
     if text.isnumeric():
-        if 1 <= int(text) <= 5:
+        new_text = int(text)
+        if 1 <= new_text <= 5:
             for books in book_library_data:
-                if books.get(category_of_search) >= text:
+                if books.get(category_of_search) >= new_text:
                     print(f"** Book_title: {books['title']} - | - Author: {books['author']}")
                     found = True
         else:
@@ -266,6 +267,7 @@ def book_search(data: list):
             break
         elif choice == "4":
             book_search_operator(data, choice, "rating")
+            break
         else:
             print("Invalid choice")
 

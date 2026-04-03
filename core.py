@@ -2,6 +2,8 @@ import datetime
 import random
 import json
 from operator import itemgetter
+from storage import load_json_data, save_json_data
+from config import DATA_FILE, USERS_FILE
 
 
 def validate_string(prompt: str) -> str:
@@ -42,9 +44,9 @@ def read_book() -> bool:
 
 def book_rating(val: bool):
     """
-    this function checks the val boolean input, if it is True,
-    the function generates random numbers between, 1 to 5, and
-    returns an int value otherwise it returns None
+    this function checks the val boolean input, which can be either true of false, if it is True,
+    the function generates random numbers between, 1 to 5, and returns an int value otherwise it
+    returns None
     :param val: a boolean value
     :return: int or None value
     """
@@ -69,7 +71,9 @@ def generate_id(data: list) -> float:
 
 
 def add_book(data: list):
-    """This function adds a new book to the library"""
+    """This function adds a new book to the library after checking through our json file/document
+        to be sure that such book does not already exist
+    """
 
     title = validate_string("Enter the title: ")
     author = validate_string("Enter the author's name: ")
@@ -88,7 +92,7 @@ def add_book(data: list):
             return
 
     data.append(book)
-    update_json_data(data, filename='data.json')
+    save_json_data(data=data, filename=DATA_FILE)
     print(f"Book Added!!! Title: {title}")
 
 

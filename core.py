@@ -113,47 +113,40 @@ def display_all_books(data: list):
         print(f"{index}. {book['title'].capitalize()} - {book['author'].capitalize()} ({'Available' if book['available'] else 'Borrowed'})")
 
 
-def borrow_book(data: list) -> str:
+def borrow_book(data: list, users: list) -> str:
     """
     this function searches for the book that the user wants to borrow, if the book is available
-    to be borrowed, the key value changes to False, to indicate it has been borrowed.
+    to be borrowed, the key value changes to False, to indicate it has been borrowed. Time when
+    it was borrowed would be updated and the returned value would be updated to None.
     If it is not available it prints a message telling that the book is not available to be borrowed
     :param data: library list of books
+    :param users: list of book borrowers
     :return: a string message
     """
-    if not data:
-        return "No book in the library"
-
     name = validate_string("Please enter your name: ")
     book_title_to_be_borrowed = validate_string("Enter book title: ")
 
-    for books in data:
-        if books.get("title").casefold() == book_title_to_be_borrowed.casefold() and books["available"]:
-            books["available"] = False
-            books["returned_at"] = None
-            books["borrowed_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    for book in data:
+        if book.get("title").casefold() == book_title_to_be_borrowed.casefold():
+            if not book["available"]:
+                return "Book already borrowed"
 
-            users = load_json_data('users.json')
-            if not users:
+            book["available"] = False
+            book["returned_at"] = None
+            book["borrowed_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+
+            user = next((u for u in users if u["name"].casefold() == name.casefold()), None)
+
+            if not user:
                 user = {"name": name, "borrowed_books": []}
-                user["borrowed_books"].append(book_title_to_be_borrowed)
                 users.append(user)
 
-                with open('users.json', mode='w', encoding='utf-8') as write_file:
-                    json.dump(users, write_file, indent=4)
+            user["borrowed_books"].append(book_title_to_be_borrowed)
+            save_json_data(users, USERS_FILE)
+            save_json_data(data, DATA_FILE)
 
-                update_json_data(data, filename='data.json')
-            else:
-                for user in users:
-                    if user["name"] == name:
-                        user["borrowed_books"].append(book_title_to_be_borrowed)
-                        break
-                update_json_data(users, 'users.json')
-                update_json_data(data, 'data.json')
-            return f"{books['title']} borrowed to {name.capitalize()} and to be returned in ten days time"
+            return f"{book['title']} borrowed to {name.capitalize()} and to be returned in ten days time"
 
-        elif books.get("title").casefold() == book_title_to_be_borrowed.casefold():
-            return "Book has been borrowed"
     return "Book not found"
 
 

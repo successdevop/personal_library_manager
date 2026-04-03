@@ -4,22 +4,6 @@ import json
 from operator import itemgetter
 
 
-def load_json_data(file):
-    """this functions loads data into our python list by reading data from our json file/document"""
-    try:
-        with open(file, mode='r', encoding='utf-8') as file_reader:
-            return json.load(file_reader)
-    except Exception as e:
-        print(f"Error message: {e}/ File is empty, starting with an empty list")
-        return []
-
-
-def update_json_data(data, filename):
-    """this function updates our json file with every change made in our data object"""
-    with open(filename, mode='w', encoding='utf-8') as write_data:
-        json.dump(data, write_data, indent=4)
-
-
 def validate_string(prompt: str) -> str:
     """
     this function makes sure that an empty space is not returned

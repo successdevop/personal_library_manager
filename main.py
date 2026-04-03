@@ -1,5 +1,5 @@
 import json
-from utils import *
+from core import *
 
 
 def load_data():

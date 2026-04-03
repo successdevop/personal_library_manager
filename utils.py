@@ -105,9 +105,7 @@ def add_book(data: list):
 
     data.append(book)
     update_json_data(data)
-
     print(f"Book Added!!! Title: {title}")
-    print(data)
 
 
 def remove_book(data: list):
@@ -159,8 +157,7 @@ def borrow_book(data: list) -> str:
 
         elif books.get("title").casefold() == book_title_to_be_borrowed.casefold():
             return "Book has been borrowed"
-
-        return "Book not found"
+    return "Book not found"
 
 
 def return_borrowed_book():
@@ -225,6 +222,7 @@ def view_statistics(data: list):
     average_rating = total_rating // len(rated_books)
 
     print(f"""
+    ======= Library Statistics =======
     Total books: {total_books}
     Available books: {available_books}
     Borrowed books: {borrowed_books}
@@ -237,7 +235,9 @@ def view_statistics(data: list):
 
 def get_top_rated_books(data: list):
     top_rated = sorted(data, key=itemgetter('rating'))[-3:]
-    print(top_rated)
+    print("======= Top Rated Books =======")
+    for index, book in enumerate(top_rated, 1):
+        print(f"{index} {book['title'].capitalize()}")
 
 
 def book_search_operator(book_library_data, choice, category_of_search):
@@ -378,47 +378,8 @@ def display_menu():
     print("5. View statistics")
     print("6. Mark book as read")
     print("7. Generate reading list")
-    print("8. Classify books by authors")
+    print("8. Books per authors")
+    print("9. Get top rated books")
+    print("10. Borrow book")
+    print("11. Return book")
     print("0. Exit")
-
-
-def main():
-    display_menu()
-
-    while True:
-        choice = input("Enter your choice: ")
-
-        if choice == "1":
-            add_book(library)
-        elif choice == "2":
-            remove_book(library)
-        elif choice == "3":
-            book_search(library)
-        elif choice == "4":
-            display_all_books(library)
-        elif choice == "5":
-            view_statistics(library)
-        elif choice == "6":
-            update_reading_status(library)
-        elif choice == "7":
-            generate_reading_list(library)
-        elif choice == "8":
-            analyze_authors(library)
-        elif choice == "0":
-            break
-        else:
-            print("Invalid choice option")
-
-
-# main()
-
-# add_book(library)
-# remove_book(library)
-# display_all_books(library)
-# view_statistics(library)
-# book_search(library)
-# mark_book_as_read(library)
-# generate_reading_list(library, genre="romance")
-# analyze_authors(library)
-# borrow_book(library)
-# return_borrowed_book(library)

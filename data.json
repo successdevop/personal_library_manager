@@ -82,5 +82,17 @@
         "available": true,
         "borrowed_at": null,
         "returned_at": null
-  }
+    },
+    {
+        "id": 8,
+        "title": "Love at first sight",
+        "author": "SIR",
+        "year": 2024,
+        "genre": "fiction",
+        "read": true,
+        "rating": 4,
+        "available": true,
+        "borrowed_at": null,
+        "returned_at": null
+    }
 ]

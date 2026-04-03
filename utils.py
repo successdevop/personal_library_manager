@@ -10,7 +10,7 @@ def load_json_data(file):
         with open(file, mode='r', encoding='utf-8') as file_reader:
             return json.load(file_reader)
     except Exception as e:
-        print(f"Error message: {e}")
+        print(f"Error message: {e}/ File is empty, starting with an empty list")
         return []
 
 
@@ -146,13 +146,20 @@ def borrow_book(data: list) -> str:
 
             users = load_json_data('users.json')
             if not users:
-                users.append({"name": name, "borrowed_books": [].append(book_title_to_be_borrowed)})
+                user = {"name": name, "borrowed_books": []}
+                user["borrowed_books"].append(book_title_to_be_borrowed)
+                users.append(user)
+
                 with open('users.json', mode='w', encoding='utf-8') as write_file:
                     json.dump(users, write_file, indent=4)
+
+                update_json_data(data)
+                break
             else:
                 for user in users:
                     if user["name"] == name:
                         user["borrowed_books"].append(book_title_to_be_borrowed)
+                        break
             return f"{books['title']} borrowed to {name.capitalize()} and to be returned in ten days time"
 
         elif books.get("title").casefold() == book_title_to_be_borrowed.casefold():

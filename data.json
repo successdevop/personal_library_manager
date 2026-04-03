@@ -19,8 +19,8 @@
         "genre": "culture",
         "read": true,
         "rating": 5,
-        "available": true,
-        "borrowed_at": null,
+        "available": false,
+        "borrowed_at": "2026-04-03 14:15",
         "returned_at": null
     },
     {

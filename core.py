@@ -150,7 +150,7 @@ def borrow_book(data: list, users: list) -> str:
     return "Book not found"
 
 
-def return_borrowed_book():
+def return_borrowed_book(data: list, users: list) -> str:
     """
     this function searches our borrower's database(json file), if users are found that means books have been
     borrowed. then we check the name of the borrower and the title of the book borrowed, if found, the availability
@@ -158,38 +158,33 @@ def return_borrowed_book():
     list of borrowed books and a message would be returned. Otherwise, it would return book not found.
     :return: a message string text
     """
-    found = False
-    users = load_json_data('users.json')
-    if not users:
-        return "No books borrowed"
-
     name = validate_string("Please enter your name: ")
     book_title_borrowed = validate_string("Please enter the title of book borrowed: ")
 
-    for user in users:
-        if user['name'] == name and book_title_borrowed.casefold() in user["borrowed_books"]:
-            library_ = load_json_data('data.json')
-            for books in library_:
-                if books["title"].casefold() == book_title_borrowed.casefold():
-                    books["available"] = True
-                    books["borrowed_at"] = None
-                    books["returned_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-                    break
+    user = next((u for u in users if u["name"].casefold() == name.casefold()), None)
+    if not user:
+        return f"Borrower({name.capitalize()}) not found"
 
-            user["borrowed_books"].remove(book_title_borrowed)
+    if book_title_borrowed not in user["borrowed_books"]:
+        return "Book not found in borrower's library"
 
-            if len(user['borrowed_books']) < 1:
-                users.remove(user)
-
-            update_json_data(users, filename='users.json')
-            update_json_data(library_, filename='data.json')
-
-            found = True
-
-    if not found:
+    book = next((b for b in data if b["title"].casefold() == book_title_borrowed.casefold()), None)
+    if not book:
         return "Book not found"
-    else:
-        return {f"{name.capitalize()} has returned the book ({book_title_borrowed})"}
+
+    book["available"] = True
+    book["borrowed_at"] = None
+    book["returned_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    user["borrowed_books"].remove(book_title_borrowed)
+
+    if len(user["borrowed_books"]) < 1:
+        users.remove(user)
+
+    save_json_data(users, USERS_FILE)
+    save_json_data(data, DATA_FILE)
+
+    return f"{name.capitalize()} has returned the book ({book_title_borrowed})"
 
 
 def view_statistics(data: list):

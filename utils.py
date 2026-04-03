@@ -198,11 +198,46 @@ def return_borrowed_book():
 def view_statistics(data: list):
     """ this function shows the different statistics about books in our library"""
     total_books = len(data)
-    print(total_books)
+
     available_books = len([book for book in data if book["available"]])
-    print(available_books)
-    unavailable_books = total_books - available_books
-    print(unavailable_books)
+
+    borrowed_books = total_books - available_books
+
+    books_per_genre = {}
+    counter = 0
+    most_common_genre = None
+    for book in data:
+        genre = book['genre'].casefold()
+        books_per_genre[genre] = books_per_genre.setdefault(genre, 0) + 1
+    for genre, genre_value in books_per_genre.items():
+        if counter < genre_value:
+            counter = genre_value
+            most_common_genre = genre
+
+    unread_books = len([book for book in data if not book["read"]])
+
+    read_books = total_books - unread_books
+
+    rated_books = [books for books in data if books["rating"]]
+    total_rating = 0
+    for book in rated_books:
+        total_rating += book['rating']
+    average_rating = total_rating // len(rated_books)
+
+    print(f"""
+    Total books: {total_books}
+    Available books: {available_books}
+    Borrowed books: {borrowed_books}
+    Most common genre: {most_common_genre}
+    Total unread books: {unread_books}
+    Total read books: {read_books}
+    Average book rating: {average_rating}
+    """)
+
+
+def get_top_rated_books(data: list):
+    top_rated = sorted(data, key=itemgetter('rating'))[-3:]
+    print(top_rated)
 
 
 def book_search_operator(book_library_data, choice, category_of_search):
@@ -324,8 +359,12 @@ def books_per_author(data: list):
     # Return dict with author names as keys, count as values
     authors = {}
     for author in data:
-        val = author["author"]
-        authors[val] = authors.setdefault(val, 0) + 1
+        val = author["author"].casefold()
+        if val in authors:
+            authors[val] += 1
+        else:
+            authors[val] = 1
+        # authors[val] = authors.setdefault(val, 0) + 1
     print(authors)
 
 

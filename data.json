@@ -2,10 +2,10 @@
     {
         "id": 1,
         "title": "half of a yellow sun",
-        "author": "adichie chimamanda",
+        "author": "chimamanda adichie",
         "year": 2006,
         "genre": "culture",
-        "read": false,
+        "read": true,
         "rating": 3,
         "available": true,
         "borrowed_at": null,
@@ -29,7 +29,7 @@
         "author": "wole soyinka",
         "year": 2009,
         "genre": "politics",
-        "read": false,
+        "read": true,
         "rating": 5,
         "available": true,
         "borrowed_at": null,
@@ -53,7 +53,7 @@
         "author": "chinua achebe",
         "year": 1996,
         "genre": "politics",
-        "read": false,
+        "read": true,
         "rating": 5,
         "available": true,
         "borrowed_at": null,
@@ -65,10 +65,22 @@
         "author": "Harper Lee",
         "year": 1960,
         "genre": "Fiction",
-        "read": false,
+        "read": true,
         "rating": 4,
         "available": true,
         "borrowed_at": null,
         "returned_at": null
-    }
+    },
+    {
+        "id": 7,
+        "title": "the thing around your neck",
+        "author": "chimamanda adichie",
+        "year": 2003,
+        "genre": "fiction",
+        "read": true,
+        "rating": 3,
+        "available": true,
+        "borrowed_at": null,
+        "returned_at": null
+  }
 ]

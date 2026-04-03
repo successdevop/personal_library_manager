@@ -1,7 +1,5 @@
 import datetime
 import random
-import json
-from operator import itemgetter
 from storage import load_json_data, save_json_data
 from config import DATA_FILE, USERS_FILE
 
@@ -214,7 +212,7 @@ def view_statistics(data: list):
     total_rating = 0
     for book in rated_books:
         total_rating += book['rating']
-    average_rating = total_rating // len(rated_books)
+    average_rating = total_rating // len(rated_books) if rated_books else 0
 
     print(f"""
     ======= Library Statistics =======
@@ -229,7 +227,7 @@ def view_statistics(data: list):
 
 
 def get_top_rated_books(data: list):
-    top_rated = sorted(data, key=itemgetter('rating'))[-3:]
+    top_rated = sorted(data, key=lambda x: x.get("rating") or 0)[-3:]
     print("======= Top Rated Books =======")
     for index, book in enumerate(top_rated, 1):
         print(f"{index} {book['title'].capitalize()}")

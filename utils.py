@@ -14,9 +14,9 @@ def load_json_data(file):
         return []
 
 
-def update_json_data(data):
+def update_json_data(data, filename):
     """this function updates our json file with every change made in our data object"""
-    with open('data.json', mode='w', encoding='utf-8') as write_data:
+    with open(filename, mode='w', encoding='utf-8') as write_data:
         json.dump(data, write_data, indent=4)
 
 
@@ -104,7 +104,7 @@ def add_book(data: list):
             return
 
     data.append(book)
-    update_json_data(data)
+    update_json_data(data, filename='data.json')
     print(f"Book Added!!! Title: {title}")
 
 
@@ -142,6 +142,7 @@ def borrow_book(data: list) -> str:
     for books in data:
         if books.get("title").casefold() == book_title_to_be_borrowed.casefold() and books["available"]:
             books["available"] = False
+            books["returned_at"] = None
             books["borrowed_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
             users = load_json_data('users.json')
@@ -153,13 +154,14 @@ def borrow_book(data: list) -> str:
                 with open('users.json', mode='w', encoding='utf-8') as write_file:
                     json.dump(users, write_file, indent=4)
 
-                update_json_data(data)
-                break
+                update_json_data(data, filename='data.json')
             else:
                 for user in users:
                     if user["name"] == name:
                         user["borrowed_books"].append(book_title_to_be_borrowed)
                         break
+                update_json_data(users, 'users.json')
+                update_json_data(data, 'data.json')
             return f"{books['title']} borrowed to {name.capitalize()} and to be returned in ten days time"
 
         elif books.get("title").casefold() == book_title_to_be_borrowed.casefold():
@@ -181,7 +183,7 @@ def return_borrowed_book():
         return "No books borrowed"
 
     name = validate_string("Please enter your name: ")
-    book_title_borrowed = validate_string("Please enter the title of book borrowed")
+    book_title_borrowed = validate_string("Please enter the title of book borrowed: ")
 
     for user in users:
         if user['name'] == name and book_title_borrowed.casefold() in user["borrowed_books"]:
@@ -189,8 +191,18 @@ def return_borrowed_book():
             for books in library_:
                 if books["title"].casefold() == book_title_borrowed.casefold():
                     books["available"] = True
+                    books["borrowed_at"] = None
                     books["returned_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                    break
+
             user["borrowed_books"].remove(book_title_borrowed)
+
+            if len(user['borrowed_books']) < 1:
+                users.remove(user)
+
+            update_json_data(users, filename='users.json')
+            update_json_data(library_, filename='data.json')
+
             found = True
 
     if not found:

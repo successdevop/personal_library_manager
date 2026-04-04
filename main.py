@@ -1,20 +1,15 @@
-import json
 from core import *
-
-
-def load_data():
-    try:
-        with open('data.json', mode='r', encoding='utf-8') as library_data:
-            return json.load(library_data)
-    except Exception as e:
-        print(f"Error message: {e}")
-        return []
+from storage import load_json_data
+from config import DATA_FILE, USERS_FILE
 
 
 def main():
-    library = load_data()
+    library = load_json_data(DATA_FILE)
     if not library:
+        print("No book in the Library")
         return
+
+    users = load_json_data(USERS_FILE)
 
     while True:
         display_menu()
@@ -39,9 +34,9 @@ def main():
         elif choice == "9":
             get_top_rated_books(library)
         elif choice == "10":
-            borrow_book(library)
+            borrow_book(library, users)
         elif choice == "11":
-            return_borrowed_book()
+            return_borrowed_book(library, users)
         elif choice == "0":
             break
         else:

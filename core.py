@@ -1,6 +1,6 @@
 import datetime
 import random
-from storage import load_json_data, save_json_data
+from storage import save_json_data
 from config import DATA_FILE, USERS_FILE
 
 

@@ -227,6 +227,7 @@ def view_statistics(data: list):
 
 
 def get_top_rated_books(data: list):
+    """ this function searches our library and returns the top-rated three books"""
     top_rated = sorted(data, key=lambda x: x.get("rating") or 0)[-3:]
     print("======= Top Rated Books =======")
     for index, book in enumerate(top_rated, 1):
@@ -253,21 +254,21 @@ def book_search_operator(book_library_data, choice, category_of_search):
     elif choice == "4":
         text = input("Please enter ratings between 1 to 5: ")
 
-    if text.isnumeric():
+    if not text.isnumeric():
+        for index, books in enumerate(book_library_data, 1):
+            if text.casefold() in books.get(category_of_search).casefold():
+                print(f"{index}. Book_title: {books['title']} - | - Author: {books['author']}")
+                found = True
+    else:
         new_text = int(text)
         if 1 <= new_text <= 5:
-            for books in book_library_data:
+            for index, books in enumerate(book_library_data, 1):
                 if books.get(category_of_search) >= new_text:
-                    print(f"** Book_title: {books['title']} - | - Author: {books['author']}")
+                    print(f"{index}. Book_title: {books['title']} - | - Author: {books['author']}")
                     found = True
         else:
             print("Enter a rating between 1 to 5 next time. Bye....")
             return
-    else:
-        for books in book_library_data:
-            if text.casefold() in books.get(category_of_search).casefold():
-                print(f"** Book_title: {books['title']} - | - Author: {books['author']}")
-                found = True
 
     if not found:
         print(f"Books with this {category_of_search} not found")

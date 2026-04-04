@@ -37,6 +37,10 @@ def main():
             borrow_book(library, users)
         elif choice == "11":
             return_borrowed_book(library, users)
+        elif choice == "12":
+            book_overdue_system_check(library)
+        elif choice == "13":
+            pagination(library, 1, 3)
         elif choice == "0":
             break
         else:

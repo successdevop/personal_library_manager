@@ -379,13 +379,28 @@ def book_overdue_system_check(data: list):
     found = False
     for book in borrowed_books:
         time_borrowed = datetime.datetime.now().strptime(book["borrowed_at"], "%Y-%m-%d %H:%M")
-        print(time_borrowed)
+
         if (datetime.datetime.now() - time_borrowed) > datetime.timedelta(days=10):
             print(f"Book title: {book['title']}")
             found = True
 
     if not found:
         print("No overdue books")
+
+
+def pagination(data: list, page=1, per_page=5):
+    """
+    this function loads data into our library in bit, that is, five books per time. This feature helps
+    to increase performance
+    :param data: library data
+    :param page: page per screen
+    :param per_page: number of data to be loaded
+    :return: None
+    """
+    start = (page - 1) * per_page
+    d = data[start:start+per_page]
+    for i in d:
+        print(i)
 
 
 def display_menu():
@@ -402,4 +417,6 @@ def display_menu():
     print("9. Get top rated books")
     print("10. Borrow book")
     print("11. Return book")
+    print("12. Overdue books")
+    print("13. Pagination")
     print("0. Exit")

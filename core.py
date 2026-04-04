@@ -363,6 +363,31 @@ def books_per_author(data: list):
     print(authors)
 
 
+def book_overdue_system_check(data: list):
+    """
+    this function searches our json file/document to find books overdue, that is, books that have been
+    borrowed for more than ten day. If it finds, it prints those books, if it doesn't, it prints a
+    message to that effect
+    :param data: Library book data
+    :return: None
+    """
+    borrowed_books = [b for b in data if b.get("borrowed_at")]
+    if not borrowed_books:
+        print("No borrowed books")
+        return
+
+    found = False
+    for book in borrowed_books:
+        time_borrowed = datetime.datetime.now().strptime(book["borrowed_at"], "%Y-%m-%d %H:%M")
+        print(time_borrowed)
+        if (datetime.datetime.now() - time_borrowed) > datetime.timedelta(days=10):
+            print(f"Book title: {book['title']}")
+            found = True
+
+    if not found:
+        print("No overdue books")
+
+
 def display_menu():
     """Show menu options"""
     print("\n=== Personal Library Manager ===")

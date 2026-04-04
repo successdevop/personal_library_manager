@@ -306,7 +306,7 @@ def update_reading_status(data: list):
     the user uses this function to update a book that was previously not read
     It could be any book
     :param data: library book data
-    :return: None/performs an action
+    :return: None
     """
     unread_books = [book for book in data if not book["read"]]
     if not unread_books:
@@ -315,13 +315,11 @@ def update_reading_status(data: list):
 
     book_to_update = random.choice(unread_books)
 
-    for book in data:
-        if book.get("title") == book_to_update["title"]:
-            book["read"] = True
-            book["rating"] = book_rating(book["read"])
-            update_json_data(data)
-            print(f"I have just finished reading the book ({book_to_update['title']}). Book updated")
-            break
+    book = next((b for b in data if b["title"].casefold() == book_to_update["title"].casefold()))
+    book["read"] = True
+    book["rating"] = book_rating(book["read"])
+    save_json_data(data, DATA_FILE)
+    print(f"I have just finished reading the book ({book_to_update['title']}). Book updated")
 
 
 def generate_reading_list(data: list, genre=None):

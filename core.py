@@ -331,19 +331,20 @@ def generate_reading_list(data: list, genre=None):
         print("No unread books")
         return
 
-    found = False
+    # if genre:
+    #     for index, books in enumerate(unread_books, 1):
+    #         if books.get("genre") != genre.casefold():
 
-    if genre is not None:
+    if not genre:
+        for index, books in enumerate(unread_books, 1):
+            print(f"{index}. {(books['title'], books['author'])}")
+    else:
         for books in unread_books:
             if books.get("genre").casefold() == genre.casefold():
                 print(f"{(books["title"], books["author"])}")
-                found = True
-        if not found:
-            print("There are no unread books with such genre")
-        return
-
-    for books in unread_books:
-        print(f"{(books["title"], books["author"])}")
+            else:
+                print("There are no unread books with such genre")
+                return
 
 
 def books_per_author(data: list):

@@ -56,6 +56,7 @@ to manage books, track borrowing activities, and generate useful insights from s
 
 ## 📁 Project Structure
 
+```bash
 library_project/
 │
 ├── main.py          # Entry point of the application
@@ -63,7 +64,7 @@ library_project/
 ├── config.py        # Stores the file name for data and users
 ├── data.json        # Stores book data
 ├── users.json       # Stores user borrowing data
-
+```
 ---
 
 ## ⚙️ How It Works
@@ -111,6 +112,9 @@ python main.py
 9. Get top rated books
 10. Borrow book
 11. Return book
+12. Overdue books
+13. Pagination
+14. Sort books
 0. Exit
 ```
 
@@ -137,9 +141,6 @@ python main.py
 
 ## 🔥 Future Improvements
 
-* Pagination for large datasets
-* Overdue book detection system
-* Sorting (by rating, year, author)
 * Error logging system
 * Convert to a web application (Flask/Django)
 * Replace JSON with a database (SQLite/PostgreSQL)

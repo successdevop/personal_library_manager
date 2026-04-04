@@ -41,6 +41,8 @@ def main():
             book_overdue_system_check(library)
         elif choice == "13":
             pagination(library, 1, 3)
+        elif choice == "14":
+            print(sort_books(library, "rating"))
         elif choice == "0":
             break
         else:

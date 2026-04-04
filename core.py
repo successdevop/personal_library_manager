@@ -398,9 +398,17 @@ def pagination(data: list, page=1, per_page=5):
     :return: None
     """
     start = (page - 1) * per_page
-    d = data[start:start+per_page]
-    for i in d:
-        print(i)
+    return data[start:start+per_page]
+
+
+def sort_books(data: list, key: str) -> list:
+    """
+    this function helps the library management to sort books according to any key of their choice
+    :param data: library book data
+    :param key: string value
+    :return: a new sorted list
+    """
+    return sorted(data, key=lambda x: x.get(key) or 0)
 
 
 def display_menu():
@@ -419,4 +427,5 @@ def display_menu():
     print("11. Return book")
     print("12. Overdue books")
     print("13. Pagination")
+    print("14. Sort books")
     print("0. Exit")

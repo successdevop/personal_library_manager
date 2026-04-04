@@ -97,12 +97,14 @@ def add_book(data: list):
 def remove_book(data: list):
     """this function removes a book from the libreary by the book's title"""
     book_r = input("Enter the title of the book: ")
-    for book in data:
-        if book.get("title").casefold() == book_r.casefold():
-            data.remove(book)
-            print("Book removed")
-            return
-    print("Book not found")
+    book = next((b for b in data if b["title"].casefold() == book_r.casefold()), None)
+    if not book:
+        print("Book not found")
+        return
+
+    data.remove(book)
+    save_json_data(data, DATA_FILE)
+    print("Book removed")
 
 
 def display_all_books(data: list):
@@ -255,16 +257,16 @@ def book_search_operator(book_library_data, choice, category_of_search):
         text = input("Please enter ratings between 1 to 5: ")
 
     if not text.isnumeric():
-        for index, books in enumerate(book_library_data, 1):
+        for books in book_library_data:
             if text.casefold() in books.get(category_of_search).casefold():
-                print(f"{index}. Book_title: {books['title']} - | - Author: {books['author']}")
+                print(f"*. Book_title: {books['title']} - | - Author: {books['author']}")
                 found = True
     else:
         new_text = int(text)
         if 1 <= new_text <= 5:
-            for index, books in enumerate(book_library_data, 1):
+            for books in book_library_data:
                 if books.get(category_of_search) >= new_text:
-                    print(f"{index}. Book_title: {books['title']} - | - Author: {books['author']}")
+                    print(f"*. Book_title: {books['title']} - | - Author: {books['author']}")
                     found = True
         else:
             print("Enter a rating between 1 to 5 next time. Bye....")
